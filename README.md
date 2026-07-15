@@ -18,6 +18,8 @@ It dynamically learns about you over time, manages its own memory context, and i
 - **Styling:** Vanilla CSS 
 - **Database / Auth:** Supabase (for storing long-term memories and logging conversation evaluations)
 - **AI Orchestration:** Groq API (utilizing Llama 3.3 for background memory extraction and dynamic tool usage)
+- **Linting:** ESLint
+- **Deployment:** Pre-configured for Vercel (`vercel.json`) and Netlify (`netlify.toml`)
 
 ## 🚀 Getting Started
 
@@ -59,6 +61,15 @@ It dynamically learns about you over time, manages its own memory context, and i
    ```bash
    npm run build
    ```
+
+### Deployment
+
+Lumina includes configuration files for seamless deployment to modern hosting platforms:
+
+- **Vercel:** Uses `vercel.json` to handle Single Page Application (SPA) routing.
+- **Netlify:** Uses `netlify.toml` to define build commands and handle SPA routing.
+
+*Note: Remember to add your `.env` variables to the respective platform's dashboard before deploying.*
 
 ## 🏗️ Architecture Highlight
 
