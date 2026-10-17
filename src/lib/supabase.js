@@ -1,12 +1,24 @@
 import { createClient } from '@supabase/supabase-js'
+import { config } from '../core/config.js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = config.supabaseUrl
+const supabaseKey = config.supabaseAnonKey
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
+export const supabase = (supabaseUrl && supabaseKey)
+  ? createClient(supabaseUrl, supabaseKey)
+  : null
+
+function warnMissingConfig(feature) {
+  console.warn(`Supabase ${feature} called, but VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is not configured.`)
+}
 
 // Save a response to the eval log
 export async function logResponse({ sessionId, userMsg, assistantMsg, toolsUsed, latencyMs }) {
+  if (!supabase) {
+    warnMissingConfig('logResponse')
+    return null
+  }
+
   const { data, error } = await supabase
     .from('eval_logs')
     .insert({
@@ -25,7 +37,7 @@ export async function logResponse({ sessionId, userMsg, assistantMsg, toolsUsed,
 
 // Save a thumbs up/down rating
 export async function rateResponse(logId, rating) {
-  if (!logId) return
+  if (!supabase || !logId) return
   await supabase
     .from('eval_logs')
     .update({ user_rating: rating })
@@ -34,6 +46,7 @@ export async function rateResponse(logId, rating) {
 
 // Get eval stats for dashboard
 export async function getEvalStats() {
+  if (!supabase) return []
   const { data } = await supabase
     .from('eval_logs')
     .select('user_rating, latency_ms, tools_used, created_at')
@@ -45,6 +58,7 @@ export async function getEvalStats() {
 
 // Memory: get all stored facts
 export async function getMemories() {
+  if (!supabase) return []
   const { data } = await supabase
     .from('memories')
     .select('content, category, created_at')
@@ -56,7 +70,7 @@ export async function getMemories() {
 
 // Memory: save new facts
 export async function saveMemories(facts) {
-  if (!facts?.length) return
+  if (!supabase || !facts?.length) return
   await supabase.from('memories').insert(
     facts.map(f => ({ content: f, category: 'extracted' }))
   )
@@ -64,6 +78,10 @@ export async function saveMemories(facts) {
 
 // Notes: save a note
 export async function saveNote({ title, content }) {
+  if (!supabase) {
+    warnMissingConfig('saveNote')
+    return null
+  }
   const { data } = await supabase
     .from('notes')
     .insert({ title, content })
@@ -74,6 +92,7 @@ export async function saveNote({ title, content }) {
 
 // Notes: get all notes, optionally filtered
 export async function getNotes(query) {
+  if (!supabase) return []
   let req = supabase
     .from('notes')
     .select('id, title, content, created_at')

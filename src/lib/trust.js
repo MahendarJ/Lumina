@@ -1,6 +1,6 @@
 // Extract [Source: title, url] citations from response text
 export function parseCitations(text) {
-  const citationRegex = /\[Source:\s*([^,]+),\s*(https?:\/\/[^\]]+)\]/g
+  const citationRegex = /\[Source:\s*([^\]]+?),\s*(https?:\/\/[^\]\s]+)\]/g
   const citations = []
   let match
 

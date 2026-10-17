@@ -25,3 +25,7 @@ dist-ssr
 
 # Env files
 .env
+
+# Harness evaluation reports
+src/harness/reports/
+

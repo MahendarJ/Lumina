@@ -1,5 +1,6 @@
-import { getMemories, saveMemories } from './supabase'
-import { callWithRetry } from './reliability'
+import { getMemories, saveMemories } from './supabase.js'
+import { callWithRetry } from './reliability.js'
+import { config } from '../core/config.js'
 
 // Build the system prompt with injected memory
 // Called before every API request
@@ -25,11 +26,11 @@ export async function extractAndSaveMemories(conversationHistory) {
 
   try {
     const response = await callWithRetry(() =>
-      fetch(import.meta.env.VITE_API_GROQ_URL, {
+      fetch(config.groqUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+          Authorization: `Bearer ${config.groqApiKey}`,
         },
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',

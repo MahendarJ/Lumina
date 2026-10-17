@@ -1,5 +1,6 @@
-import { saveNote, getNotes } from './supabase'
-import { callWithRetry, withTimeout } from './reliability'
+import { saveNote, getNotes } from './supabase.js'
+import { callWithRetry, withTimeout } from './reliability.js'
+import { config } from '../core/config.js'
 
 // TOOL DEFINITIONS — sent to Claude so it knows what's available
 export const TOOL_DEFINITIONS = [
@@ -77,7 +78,7 @@ async function searchWeb(query) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        api_key: import.meta.env.VITE_TAVILY_API_KEY,
+        api_key: config.tavilyApiKey,
         query,
         max_results: 3,
         include_answer: true,
